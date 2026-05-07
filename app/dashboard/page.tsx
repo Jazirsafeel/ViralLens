@@ -11,7 +11,7 @@ export default async function DashboardPage() {
 
   const { data: analyses } = await supabase
     .from('analyses')
-    .select('id, content, result, created_at')
+    .select('id, user_id, content, result, created_at')
     .eq('user_id', session.user.id)
     .order('created_at', { ascending: false })
     .limit(5)
