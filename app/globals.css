@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties ── */
+:root {
+  --bg-base: #fafaf9;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #f5f4f2;
+  --bg-surface-3: #eeece9;
+  --border: #e5e2dc;
+  --border-strong: #ccc9c2;
+  --text-primary: #1a1916;
+  --text-secondary: #5c5a54;
+  --text-muted: #9e9b93;
+  --text-faint: #c4c1b8;
+  --accent: #b87333;
+  --accent-hover: #9e5f1f;
+  --accent-subtle: #fdf4e9;
+  --accent-border: #e8d4b4;
+  --accent-text: #8b5e2a;
+  --blue: #2d5fa0;
+  --blue-subtle: #edf3fc;
+  --blue-border: #b8cfed;
+  --blue-text: #1e4278;
+  --green: #2d7a4f;
+  --green-subtle: #edf7f2;
+  --green-border: #a8d9be;
+  --green-text: #1b5235;
+  --red: #b54040;
+  --red-subtle: #fdf0f0;
+  --red-border: #e8b8b8;
+  --red-text: #7d2c2c;
+  --yellow: #8a6800;
+  --yellow-subtle: #fdfaed;
+  --yellow-border: #e8d890;
+  --yellow-text: #7a5800;
+  --shadow-sm: 0 1px 2px rgba(26,25,22,0.04), 0 1px 4px rgba(26,25,22,0.03);
+  --shadow-md: 0 4px 8px rgba(26,25,22,0.06), 0 2px 4px rgba(26,25,22,0.04);
+  --shadow-lg: 0 12px 32px rgba(26,25,22,0.08), 0 4px 12px rgba(26,25,22,0.05);
+}
+
+.dark {
+  --bg-base: #0d0c0b;
+  --bg-surface: #131210;
+  --bg-surface-2: #1a1815;
+  --bg-surface-3: #222019;
+  --border: #272420;
+  --border-strong: #35322c;
+  --text-primary: #ede9e3;
+  --text-secondary: #9a978f;
+  --text-muted: #625f58;
+  --text-faint: #3a3830;
+  --accent: #c98a45;
+  --accent-hover: #dda05e;
+  --accent-subtle: #1c1208;
+  --accent-border: #3d2a10;
+  --accent-text: #c98a45;
+  --blue: #5b8fd4;
+  --blue-subtle: #0c1620;
+  --blue-border: #1e3855;
+  --blue-text: #7daee8;
+  --green: #4a9e72;
+  --green-subtle: #091510;
+  --green-border: #183525;
+  --green-text: #6abf8e;
+  --red: #c26060;
+  --red-subtle: #1a0a0a;
+  --red-border: #451818;
+  --red-text: #de8080;
+  --yellow: #c8a030;
+  --yellow-subtle: #181200;
+  --yellow-border: #483800;
+  --yellow-text: #e0bc50;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.18);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.30), 0 2px 4px rgba(0,0,0,0.22);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.28);
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background-color: var(--accent); color: #fff; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--text-primary);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-faint); }
+  select option { background: var(--bg-surface); color: var(--text-primary); }
+}
+
+/* ── Font utilities ── */
+.font-serif { font-family: 'Instrument Serif', Georgia, serif; }
+.font-mono-vl { font-family: 'DM Mono', monospace; }
+
+/* ── Animations ── */
+@layer utilities {
+  .animate-fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-slide-up { animation: slideUp 0.45s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-scale-in { animation: scaleIn 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+
+/* ── Skeleton ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-surface-2) 25%, var(--bg-surface-3) 50%, var(--bg-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ── Theme transition ── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+/* But don't apply transition to elements that shouldn't animate */
+[class*="animate-"] { transition: none !important; }
