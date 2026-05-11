@@ -2,7 +2,7 @@
 
 > Know if your content will go viral — before you post.
 
-**Live demo:** [virallens.vercel.app](https://virallens.vercel.app) <!-- replace with your URL -->
+**Live demo:** [viral-lens-blond.vercel.app](https://viral-lens-blond.vercel.app)
 
 ---
 
@@ -16,7 +16,9 @@ ViralLens is an AI-powered content intelligence tool for short-form creators. Pa
 - **Hook Analyzer** — Detects hook type, scores the opening, rewrites it stronger
 - **Metric Breakdown** — Hook strength, emotional engagement, clarity, retention potential
 - **Thumbnail / Post Rating** — Upload any image and get scored on color, contrast, emotion, and text overlay
-- **Video Analysis** — AI transcribes audio, rates the hook, scores the first frame
+- **Video Analysis** — AI transcribes audio, rates the hook, scores the first frame  
+  > ⚠️ For deployment on Vercel, keep uploaded videos under **2.5 MB** due to serverless upload/runtime limits.  
+  > For testing larger videos, run the project locally using `npm run dev`.
 - **Trending Audio Picks** — 3 platform-matched audio style recommendations per analysis
 - **Hashtag Toolkit** — Platform-specific hashtag sets, copy individually or all at once
 - **Caption Generator** — 3 alternative captions in different styles (curiosity, bold, story-led)
@@ -187,7 +189,7 @@ Every `git push` to `main` triggers an automatic redeploy.
 
 ## Built For
 
-This project was built for **Build a Go Viral Clone — AI Content Virality Analyzer** · May 2026
+This project was built for **Build a Go Viral Clone — AI Content Virality Analyzer @ 8xengineer.com** · May 2026
 
 ---
 
