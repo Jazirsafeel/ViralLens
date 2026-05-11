@@ -187,7 +187,7 @@ Every `git push` to `main` triggers an automatic redeploy.
 
 ## Built For
 
-This project was built for **[Hackathon Name]** · May 2026
+This project was built for **Build a Go Viral Clone — AI Content Virality Analyzer** · May 2026
 
 ---
 

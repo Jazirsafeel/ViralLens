@@ -1,0 +1,56 @@
+Here's your complete briefing to paste into a new chat:
+
+---
+
+# ViralLens — Complete Build Brief for New Chat
+
+## What This Project Is
+
+ViralLens is an AI-powered content virality analyzer built for a hackathon. The challenge is to clone "Go Viral: AI Creator Assistant" (a tool with 59M+ views) where creators upload content and receive an AI virality score with actionable feedback. The stack is Next.js 14, TypeScript, Tailwind CSS, Supabase (auth + database), and Groq API using model `llama-3.3-70b-versatile` via `https://api.groq.com/openai/v1/chat/completions`. The env vars are `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GROQ_API_KEY`.
+
+## What Is Already Built and Working
+
+The app currently has full Supabase authentication with login and signup pages. The dashboard has a textarea where users paste text content and click Analyze. This calls `POST /api/analyze` which sends the content to Groq and returns a structured JSON with `viralScore` (0-100), `hookStrength` (0-10), `emotionalEngagement` (0-10), `clarity` (0-10), `retentionPotential` (0-10), `summary`, `suggestions` array, and `rewrittenHook`. Results are saved to a Supabase `analyses` table and displayed with a score gauge, metric cards, a before/after hook comparison panel, and a suggestions list. There is also a caption generator that makes a second Groq call returning 3 alternative captions with different styles. A full `/history` page shows all past analyses with search, score filter, date filter, pagination, click-to-expand detail view, and per-item delete. The UI has toast notifications, skeleton loading states, empty state illustration, smooth animations, and a navbar with links to Analyze and History. All components are in `/components/`, API routes in `/app/api/`, and the Groq logic is in `/lib/grok.ts`.
+
+## What Still Needs to Be Built
+
+### Feature 1 — Platform Selector
+Add a dropdown above the analyze button with three options: TikTok, Instagram Reels, and YouTube Shorts. When the user selects a platform, the Groq prompt should change its scoring weights and feedback tone accordingly. For TikTok, emphasize hook strength and trend alignment. For Instagram, emphasize visual appeal, caption quality, and hashtag use. For YouTube Shorts, emphasize retention, thumbnail strength, and title hook. The selected platform should be passed from the frontend to the API route and injected into the system prompt dynamically. The platform should also be saved alongside the analysis result in Supabase so history shows which platform each analysis was for.
+
+### Feature 2 — Hashtag and Trending Audio Recommendations
+After the main analysis is complete, add a new section at the bottom of the results called "Growth Toolkit". This makes a third Groq call (separate from the main analysis and caption generator) that takes the content and platform as input and returns a JSON with two fields: `hashtags` (array of 8-10 relevant hashtags as strings including the # symbol) and `audioSuggestions` (array of 3 objects each with a `style` name and `description` of why it fits). Create a new API route at `POST /api/toolkit` for this. Display hashtags as clickable chips with a copy-all button. Display audio suggestions as cards with the style name and reasoning. Both should have individual copy buttons.
+
+### Feature 3 — Image Upload and Thumbnail Rating
+Add a toggle above the content input that switches between Text mode and Image mode. In Image mode, show a drag-and-drop upload zone that accepts JPG, PNG, and WebP files up to 5MB. When an image is uploaded, convert it to base64 in the browser and send it to a new API route `POST /api/analyze-image`. This route should use Groq's vision-capable model — use `meta-llama/llama-4-scout-17b-16e-instruct` which supports image inputs on Groq. The prompt should ask for a thumbnail rating with fields: `thumbnailScore` (0-10), `facePresence` (boolean), `textOverlayQuality` (0-10), `colorContrast` (0-10), `emotionalImpact` (0-10), `thumbnailSummary`, `thumbnailSuggestions` array, and `rewrittenTitle`. Display these results with the same metric card components already in the codebase. Also save image analyses to the same `analyses` table with a `type` field set to either `text` or `image`.
+
+### Feature 4 — Hook Analysis Panel
+Currently the rewritten hook is shown in a before/after comparison but there is no dedicated hook scoring. Add a new dedicated "Hook Analyzer" section in the results that isolates the first sentence or first 3 seconds of content. Show it in a highlighted box at the top of results with its own `hookScore` (0-10), a one-line diagnosis of what the hook is doing wrong or right, a `hookType` label (e.g. "Question Hook", "Shock Hook", "Story Hook", "Data Hook"), and the rewritten version. This data should come from the existing main analysis call — just add `hookScore`, `hookDiagnosis`, and `hookType` fields to the existing Groq JSON schema in `lib/grok.ts` and update the TypeScript interface in `types/index.ts`.
+
+### Feature 5 — Competitor Comparison
+Add a "Compare with competitor" toggle button below the main results. When toggled on, a second textarea appears where the user pastes a competitor's content. A "Compare" button sends both pieces of content to a new API route `POST /api/compare` which makes two separate Groq analyze calls (or one call asking for dual analysis) and returns both results. Display them side by side in a two-column layout on desktop and stacked on mobile. Show score differences with up/down arrows and color coding — green if the user's content scores higher, red if lower. Add a "What they're doing better" summary section at the bottom that Groq generates as part of the compare call.
+
+### Feature 6 — Landing Page
+Create a proper landing page at the root route `/` that non-logged-in users see before signing up. Currently the root redirects straight to login. The landing page should have a hero section with the headline "Know if your content will go viral — before you post", a subheadline explaining the AI analysis, and two CTA buttons: "Analyze free" and "See how it works". Below the hero add a features section showing the six main capabilities with icons. Add a "How it works" section with three steps: Upload content → Get AI score → Apply suggestions. Add a sample score screenshot or mockup. The page should feel like a real SaaS product. After the landing page, clicking CTA should go to `/signup`. The existing auth redirect logic in `app/page.tsx` should be updated to only redirect logged-in users to dashboard, and show the landing page to everyone else.
+
+### Feature 7 — Mobile Responsiveness Polish
+Go through every screen and ensure it works on 375px wide viewport (iPhone SE size). The main issues to fix are: the before/after hook comparison grid needs to stack vertically on mobile, the competitor comparison two-column layout needs to stack, the history page filters need to wrap properly, the detail panel in history should become a full-screen modal on mobile instead of a side panel, and the score gauge should scale down on small screens. Add `sm:` and `md:` breakpoint classes wherever needed.
+
+## Database Schema Updates Needed
+
+Add a `platform` column (text, nullable) and a `type` column (text, default 'text') to the existing `analyses` table. Run this SQL in Supabase SQL Editor: `ALTER TABLE public.analyses ADD COLUMN platform text; ALTER TABLE public.analyses ADD COLUMN type text DEFAULT 'text';`
+
+## Updated TypeScript Types Needed
+
+The `AnalysisResult` interface in `types/index.ts` needs these new fields added: `hookScore: number`, `hookDiagnosis: string`, `hookType: string`. The `Analysis` interface needs `platform?: string` and `type?: string` added.
+
+## Submission Deliverables Still Needed
+
+After all features are built, take screenshots of: the landing page, the signup/login screen, the main dashboard with results showing, the hook analyzer panel, the image upload results, the competitor comparison view, and the history page. Record a Loom video (3-5 minutes) showing the full flow from landing page through signup, text analysis, image analysis, competitor comparison, and history. Update `REFLECTION.md` to cover the new features. Update `ai-logs/prompt-v3.md` to show the final evolved prompt with all new fields.
+
+## File Structure Reference
+
+The project folder structure is: `app/(auth)/login/page.tsx`, `app/(auth)/signup/page.tsx`, `app/dashboard/page.tsx`, `app/dashboard/AnalyzeForm.tsx`, `app/history/page.tsx`, `app/history/HistoryClient.tsx`, `app/api/analyze/route.ts`, `app/api/analyses/[id]/route.ts`, `app/api/captions/route.ts`, `components/ScoreGauge.tsx`, `components/MetricCard.tsx`, `components/SuggestionList.tsx`, `components/Navbar.tsx`, `components/Toast.tsx`, `components/AnalysisSkeleton.tsx`, `components/EmptyState.tsx`, `lib/grok.ts`, `lib/supabase.ts`, `lib/supabase-server.ts`, `types/index.ts`, `supabase-schema.sql`, `REFLECTION.md`, `ai-logs/prompt-v1.md`, `ai-logs/prompt-v2.md`, `ai-logs/prompt-v3.md`.
+
+---
+
+Paste this into a new chat along with the current zip file and ask it to build everything into a new zip.

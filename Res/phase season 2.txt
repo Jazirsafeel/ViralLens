@@ -1,0 +1,68 @@
+# ViralLens — Phase Plan for Remaining Features
+
+---
+
+## Phase 1 — Database & Type Foundation
+*Do this first since everything else depends on it.*
+
+Run the two ALTER TABLE statements in Supabase to add `platform` and `type` columns. Then update `types/index.ts` to add `hookScore`, `hookDiagnosis`, `hookType` to `AnalysisResult`, and `platform?`, `type?` to the `Analysis` interface. Update the Groq JSON schema in `lib/grok.ts` to include the three new hook fields in the prompt and return type.
+
+---
+
+## Phase 2 — Hook Analyzer Panel (Feature 4)
+*Lowest risk change — purely additive to existing analyze flow.*
+
+Since this only requires adding fields to the existing Groq call, no new API route is needed. Update the prompt in `lib/grok.ts`, update the TypeScript interface, then add the Hook Analyzer UI section in `app/dashboard/AnalyzeForm.tsx` above the existing before/after panel. Show hookType as a badge, hookScore as a metric card, and hookDiagnosis as a highlighted callout line.
+
+---
+
+## Phase 3 — Platform Selector (Feature 1)
+*Builds on the existing analyze flow — add before wiring new routes.*
+
+Add the platform dropdown to `AnalyzeForm.tsx`. Update `POST /api/analyze` to accept a `platform` field and inject platform-specific weight instructions into the system prompt dynamically. Save `platform` to Supabase. Update the history page to display the platform badge on each history item.
+
+---
+
+## Phase 4 — Hashtag & Audio Toolkit (Feature 2)
+*New API route, isolated section — safe to build independently.*
+
+Create `POST /api/toolkit` with a Groq call returning `hashtags` and `audioSuggestions`. Wire it to fire after the main analysis completes in `AnalyzeForm.tsx`. Build the Growth Toolkit UI section with hashtag chips (copy-all button), audio suggestion cards, and individual copy buttons.
+
+---
+
+## Phase 5 — Image Upload & Thumbnail Rating (Feature 3)
+*Requires new route + base64 handling — more surface area, do after core flow is stable.*
+
+Add the Text/Image mode toggle to `AnalyzeForm.tsx`. Build the drag-and-drop upload zone with client-side base64 conversion. Create `POST /api/analyze-image` using `meta-llama/llama-4-scout-17b-16e-instruct`. Reuse existing `MetricCard` components for the thumbnail result display. Save to `analyses` table with `type: 'image'`.
+
+---
+
+## Phase 6 — Competitor Comparison (Feature 5)
+*Most complex feature — two Groq calls, new layout, depends on stable base.*
+
+Create `POST /api/compare`. Add the "Compare with competitor" toggle and second textarea to the dashboard. Build the two-column comparison layout with score diff indicators (green/red arrows). Add the "What they're doing better" summary card at the bottom.
+
+---
+
+## Phase 7 — Landing Page (Feature 6)
+*No backend work — pure frontend, do near the end so auth redirects are finalized.*
+
+Update `app/page.tsx` to show the landing page for unauthenticated users and redirect logged-in users to dashboard. Build the hero, features grid, how-it-works steps, and CTA buttons pointing to `/signup`. Style it to feel like a real SaaS product.
+
+---
+
+## Phase 8 — Mobile Responsiveness Polish (Feature 7)
+*Do last — a pass over all screens once all features exist.*
+
+Audit every screen at 375px. Stack the before/after hook grid, competitor comparison columns, and history filters. Convert the history detail panel to a full-screen modal on mobile. Scale down the score gauge. Add `sm:` and `md:` breakpoints throughout.
+
+---
+
+## Phase 9 — Submission Wrap-up
+*After all features are verified working.*
+
+Update `REFLECTION.md` with notes on all new features. Write `ai-logs/prompt-v3.md` showing the final evolved Groq prompt. Take the required screenshots of all seven screens. Record the Loom walkthrough (landing → signup → text analysis → image analysis → competitor compare → history).
+
+---
+
+**Recommended session split:** Phases 1–4 in one sitting (core flow changes), Phases 5–6 in a second sitting (new routes + complex UI), Phases 7–9 as a final polish session.

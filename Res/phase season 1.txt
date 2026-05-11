@@ -1,0 +1,127 @@
+# ViralLens — Build Phase Sheet
+**AI Content Virality Analyzer · Hackathon MVP**
+
+---
+
+## Phase 1 — Foundation `Days 1–2`
+
+**Goal:** Scaffold, auth, DB schema
+
+| Task | Details |
+|---|---|
+| Scaffold | `npx create-next-app virallens --typescript`, install Tailwind, shadcn/ui |
+| Supabase init | New project → copy `SUPABASE_URL` + `ANON_KEY` to `.env.local` |
+| Auth | Supabase Auth, login/signup pages, session middleware |
+| DB Schema | `users`, `analyses` tables, RLS policies |
+| Skeleton UI | Dashboard shell, nav, empty states |
+
+**✓ Deliverable:** Working auth flow, empty dashboard, Supabase connected
+
+---
+
+## Phase 2 — Core AI Engine `Days 3–5`
+
+**Goal:** Input → Grok API → score → display
+
+| Task | Details |
+|---|---|
+| Input layer | Text area form + optional video upload (transcript — skip for MVP) |
+| API route | `POST /api/analyze` — receives content, calls Grok API |
+| `lib/grok.ts` | Fetch `https://api.x.ai/v1/chat/completions`, model `grok-3` |
+| Prompt engineering | System prompt → returns JSON: `viralScore`, `hookStrength`, `emotionalEngagement`, `clarity`, `retentionPotential`, `suggestions[]`, `rewrittenHook` |
+| Result UI | Score gauge, metric cards, suggestions list |
+| Persist to DB | Save analysis result to `analyses` table on completion |
+
+**Prompt skeleton:**
+```
+System: You are a top-tier content strategist. Return ONLY valid JSON — no markdown, no backticks.
+{
+  "viralScore": 0-100,
+  "hookStrength": 0-10,
+  "emotionalEngagement": 0-10,
+  "clarity": 0-10,
+  "retentionPotential": 0-10,
+  "summary": "2-3 sentence verdict",
+  "suggestions": ["...", "...", "..."],
+  "rewrittenHook": "..."
+}
+
+User: Analyze this content: {{USER_CONTENT}}
+```
+
+**✓ Deliverable:** Full analyze flow working end-to-end, results saved to DB
+
+---
+
+## Phase 3 — Polish + AI Extras `Days 6–7`
+
+**Goal:** SaaS feel, history, co-creation features
+
+| Task | Details |
+|---|---|
+| Analysis history | List past analyses from DB, clickable to revisit |
+| Rewrite assistant | Use `rewrittenHook` field to show before/after comparison |
+| Caption generator | Secondary Grok call: generate 3 alt captions from content |
+| UI polish | Loading states, animations, score color coding (red/yellow/green) |
+| AI logs folder | `/ai-logs/` — paste 3–5 prompt iterations showing evolution |
+| Reflection doc | Honest 1-pager on challenges, scope decisions, learnings |
+
+**✓ Deliverable:** Full SaaS-feeling app, demo-ready, AI logs documented
+
+---
+
+## Folder Structure
+
+```
+virallens/
+├── app/
+│   ├── (auth)/login, signup
+│   ├── dashboard/
+│   ├── analyze/
+│   └── api/analyze/route.ts
+├── components/
+│   ├── ScoreGauge.tsx
+│   ├── MetricCard.tsx
+│   └── SuggestionList.tsx
+├── lib/
+│   ├── supabase.ts
+│   └── grok.ts
+├── ai-logs/
+│   ├── prompt-v1.md
+│   ├── prompt-v2.md
+│   └── prompt-v3.md
+└── .env.local
+```
+
+---
+
+## Env vars needed
+
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+GROK_API_KEY=xai-...
+```
+
+---
+
+## Model options
+
+| Model | Use case |
+|---|---|
+| `grok-3` | Best quality, use this |
+| `grok-3-fast` | Faster if rate limited |
+| `grok-2-1212` | Fallback if quota hit |
+
+---
+
+## MVP scope cuts (skip these)
+
+- Video frame extraction — text input only first
+- Stripe / payments — mock tiers
+- Real-time streaming — single response fine
+- Multi-platform comparison — one content type
+
+---
+
+**Total: 7 days. Ship Phase 2 first, Phase 3 is bonus.**
